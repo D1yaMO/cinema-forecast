@@ -115,24 +115,48 @@ function App() {
             marginTop: "20px",
           }}
         >
-          {movies.map((movie) => (
-            <div
-              key={movie.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                padding: "10px",
-              }}
-            >
-              <h4>{movie.title}</h4>
+         {movies.map((movie) => (
+  <div
+    key={movie.id}
+    style={{
+      border: "1px solid #ddd",
+      borderRadius: "10px",
+      padding: "10px",
+      textAlign: "center",
+    }}
+  >
+    {movie.poster_path ? (
+      <img
+        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        alt={movie.title}
+        style={{
+          width: "100%",
+          borderRadius: "8px",
+        }}
+      />
+    ) : (
+      <div
+        style={{
+          height: "300px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px solid #ccc",
+        }}
+      >
+        No Poster
+      </div>
+    )}
 
-              <p>
-                {movie.release_date
-                  ? movie.release_date.substring(0, 4)
-                  : "Unknown Year"}
-              </p>
-            </div>
-          ))}
+    <h4>{movie.title}</h4>
+
+    <p>
+      {movie.release_date
+        ? movie.release_date.substring(0, 4)
+        : "Unknown Year"}
+    </p>
+  </div>
+))}
         </div>
       </div>
     </div>
