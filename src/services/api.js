@@ -33,3 +33,16 @@ export async function getMovies(query) {
 
   return res.json();
 }
+export async function getMovieByTitle(title) {
+  const res = await fetch(
+    `https://api.themoviedb.org/3/search/movie?query=${title}&api_key=${TMDB_KEY}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Movie lookup failed");
+  }
+
+  const data = await res.json();
+
+  return data.results[0];
+}
