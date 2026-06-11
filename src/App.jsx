@@ -7,28 +7,38 @@ function App() {
 
   const [weather, setWeather] = useState(null);
   const [movies, setMovies] = useState([]);
+  const [loadingWeather, setLoadingWeather] = useState(false);
+const [loadingMovies, setLoadingMovies] = useState(false);
 
   const handleWeatherSearch = async () => {
-    if (!city.trim()) return;
+  if (!city.trim()) return;
 
-    try {
-      const weatherData = await getWeather(city);
-      setWeather(weatherData);
-    } catch (err) {
-      console.error("Weather Error:", err);
-    }
-  };
+  try {
+    setLoadingWeather(true);
+
+    const weatherData = await getWeather(city);
+    setWeather(weatherData);
+  } catch (err) {
+    console.error("Weather Error:", err);
+  } finally {
+    setLoadingWeather(false);
+  }
+};
 
   const handleMovieSearch = async () => {
-    if (!movieQuery.trim()) return;
+  if (!movieQuery.trim()) return;
 
-    try {
-      const movieData = await getMovies(movieQuery);
-      setMovies(movieData.results || []);
-    } catch (err) {
-      console.error("Movie Error:", err);
-    }
-  };
+  try {
+    setLoadingMovies(true);
+
+    const movieData = await getMovies(movieQuery);
+    setMovies(movieData.results || []);
+  } catch (err) {
+    console.error("Movie Error:", err);
+  } finally {
+    setLoadingMovies(false);
+  }
+};
 
   return (
     <div
@@ -66,9 +76,12 @@ function App() {
           }}
         />
 
-        <button onClick={handleWeatherSearch}>
-          Get Weather
-        </button>
+        <button
+  onClick={handleWeatherSearch}
+  disabled={loadingWeather}
+>
+  {loadingWeather ? "Loading..." : "Get Weather"}
+</button>
 
         {weather && (
           <div style={{ marginTop: "20px" }}>
@@ -103,9 +116,12 @@ function App() {
           }}
         />
 
-        <button onClick={handleMovieSearch}>
-          Search Movies
-        </button>
+        <button
+  onClick={handleMovieSearch}
+  disabled={loadingMovies}
+>
+  {loadingMovies ? "Searching..." : "Search Movies"}
+</button>
 
         <div
           style={{
