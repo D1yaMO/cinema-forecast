@@ -16,7 +16,9 @@ export async function getWeather(city) {
     throw new Error("Weather API failed");
   }
 
-  return res.json();
+  const data = await res.json();
+
+return data;
 }
 
 // MOVIE API

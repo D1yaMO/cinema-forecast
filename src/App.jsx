@@ -9,17 +9,28 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [loadingWeather, setLoadingWeather] = useState(false);
 const [loadingMovies, setLoadingMovies] = useState(false);
+const [weatherError, setWeatherError] = useState("");
+const [movieError, setMovieError] = useState("");
 
   const handleWeatherSearch = async () => {
   if (!city.trim()) return;
 
   try {
+    setWeatherError("");
+    setWeather(null);
     setLoadingWeather(true);
 
     const weatherData = await getWeather(city);
     setWeather(weatherData);
   } catch (err) {
-    console.error("Weather Error:", err);
+  
+
+  setWeather(null);
+  setWeatherError("City not found");
+
+  console.error("Weather Error:", err);
+
+
   } finally {
     setLoadingWeather(false);
   }
@@ -29,12 +40,22 @@ const [loadingMovies, setLoadingMovies] = useState(false);
   if (!movieQuery.trim()) return;
 
   try {
+    setMovieError("");
     setLoadingMovies(true);
 
-    const movieData = await getMovies(movieQuery);
-    setMovies(movieData.results || []);
+   const movieData = await getMovies(movieQuery);
+
+if (movieData.results?.length > 0) {
+  setMovies(movieData.results);
+} else {
+  setMovies([]);
+  setMovieError("No movies found");
+}
   } catch (err) {
-    console.error("Movie Error:", err);
+  setMovies([]);
+  setMovieError("Failed to fetch movies");
+  console.error("Movie Error:", err);
+
   } finally {
     setLoadingMovies(false);
   }
@@ -50,8 +71,8 @@ const [loadingMovies, setLoadingMovies] = useState(false);
       }}
     >
       <h1 style={{ textAlign: "center" }}>
-        🌤 Weather + 🎬 Movie Finder
-      </h1>
+  🌤 Weather + 🎬 Movie Finder
+</h1>
 
       {/* WEATHER SECTION */}
       <div
@@ -82,6 +103,11 @@ const [loadingMovies, setLoadingMovies] = useState(false);
 >
   {loadingWeather ? "Loading..." : "Get Weather"}
 </button>
+{weatherError && (
+  <p style={{ color: "red", marginTop: "10px" }}>
+    ❌ {weatherError}
+  </p>
+)}
 
         {weather && (
           <div style={{ marginTop: "20px" }}>
@@ -122,6 +148,11 @@ const [loadingMovies, setLoadingMovies] = useState(false);
 >
   {loadingMovies ? "Searching..." : "Search Movies"}
 </button>
+{movieError && (
+  <p style={{ color: "red", marginTop: "10px" }}>
+    ❌ {movieError}
+  </p>
+)}
 
         <div
           style={{
