@@ -6,19 +6,20 @@ if (!WEATHER_KEY || !TMDB_KEY) {
   console.warn("Missing API keys in .env file");
 }
 
-// WEATHER API
 export async function getWeather(city) {
   const res = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_KEY}&units=metric`
   );
 
-  if (!res.ok) {
-    throw new Error("Weather API failed");
-  }
-
   const data = await res.json();
 
-return data;
+  console.log("WEATHER RESPONSE:", data);
+
+  if (data.cod !== 200) {
+    throw new Error(data.message || "City not found");
+  }
+
+  return data;
 }
 
 // MOVIE API
