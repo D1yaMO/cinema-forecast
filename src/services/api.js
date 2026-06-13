@@ -1,19 +1,12 @@
 const WEATHER_KEY = import.meta.env.VITE_WEATHER_KEY;
 const TMDB_KEY = import.meta.env.VITE_TMDB_KEY;
 
-// Safety check (helps debugging)
-if (!WEATHER_KEY || !TMDB_KEY) {
-  console.warn("Missing API keys in .env file");
-}
-
 export async function getWeather(city) {
   const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_KEY}&units=metric`
+    `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${WEATHER_KEY}&units=metric`
   );
 
   const data = await res.json();
-
-  console.log("WEATHER RESPONSE:", data);
 
   if (data.cod !== 200) {
     throw new Error(data.message || "City not found");
@@ -22,10 +15,9 @@ export async function getWeather(city) {
   return data;
 }
 
-// MOVIE API
 export async function getMovies(query) {
   const res = await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${query}&api_key=${TMDB_KEY}`
+    `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${TMDB_KEY}`
   );
 
   if (!res.ok) {
@@ -34,9 +26,10 @@ export async function getMovies(query) {
 
   return res.json();
 }
+
 export async function getMovieByTitle(title) {
   const res = await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${title}&api_key=${TMDB_KEY}`
+    `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${TMDB_KEY}`
   );
 
   if (!res.ok) {

@@ -18,71 +18,87 @@ function App() {
 const [loadingMovies, setLoadingMovies] = useState(false);
 const [weatherError, setWeatherError] = useState("");
 const [movieError, setMovieError] = useState("");
-
-  const handleWeatherSearch = async () => {
+const handleWeatherSearch = async () => {
   if (!city.trim()) return;
 
   try {
     setWeatherError("");
+
+    
     setWeather(null);
+    setRecommendedMovies([]);
     setLoadingWeather(true);
 
     const weatherData = await getWeather(city);
     setWeather(weatherData);
+
+
     let recommendedTitles = [];
 
-const condition = weatherData.weather[0].main;
+    const condition = weatherData.weather[0].main;
 
-if (condition === "Clear") {
-  recommendedTitles = [
-    "La La Land",
-    "Mamma Mia!",
-    "Luca",
-    "The Secret Life of Walter Mitty",
-  ];
-} else if (condition === "Clouds") {
-  recommendedTitles = [
-    "Interstellar",
-    "Harry Potter",
-    "Knives Out",
-    "Arrival",
-  ];
-} else if (condition === "Rain") {
-  recommendedTitles = [
-    "The Batman",
-    "Blade Runner 2049",
-    "Shutter Island",
-    "Prisoners",
-  ];
-}
-const movieResults = await Promise.all(
-  recommendedTitles.map(async (title) => {
-    try {
-      const movie = await getMovieByTitle(title);
-      return movie || null;
-    } catch (err) {
-      return null;
+    if (condition === "Clear") {
+      recommendedTitles = [
+        "La La Land",
+        "Mamma Mia!",
+        "Luca",
+        "The Secret Life of Walter Mitty",
+      ];
+    } else if (condition === "Clouds") {
+      recommendedTitles = [
+        "Interstellar",
+        "Harry Potter",
+        "Knives Out",
+        "Arrival",
+      ];
+    } else if (condition === "Rain") {
+      recommendedTitles = [
+        "The Batman",
+        "Blade Runner 2049",
+        "Shutter Island",
+        "Prisoners",
+      ];
+    } else if (condition === "Thunderstorm") {
+      recommendedTitles = [
+        "Joker",
+        "Se7en",
+        "Gone Girl",
+        "Nightcrawler",
+      ];
+    } else if (condition === "Snow") {
+      recommendedTitles = [
+        "Frozen",
+        "The Revenant",
+        "Snowpiercer",
+        "The Grey",
+      ];
     }
-  })
-);
 
-const validMovies = movieResults.filter(Boolean);
+    const movieResults = await Promise.all(
+      recommendedTitles.map(async (title) => {
+        try {
+          const movie = await getMovieByTitle(title);
+          return movie || null;
+        } catch (err) {
+          return null;
+        }
+      })
+    );
 
-setRecommendedMovies(validMovies);
+    const validMovies = movieResults.filter(Boolean);
+    setRecommendedMovies(validMovies);
+
   } catch (err) {
-  
+    setWeather(null);
+    setRecommendedMovies([]);
+    setWeatherError("City not found");
 
-  setWeather(null);
-  setWeatherError("City not found");
-
-  console.error("Weather Error:", err);
-
+    
 
   } finally {
     setLoadingWeather(false);
   }
 };
-
   const handleMovieSearch = async () => {
   if (!movieQuery.trim()) return;
 
@@ -101,7 +117,7 @@ if (movieData.results?.length > 0) {
   } catch (err) {
   setMovies([]);
   setMovieError("Failed to fetch movies");
-  console.error("Movie Error:", err);
+  
 
   } finally {
     setLoadingMovies(false);
@@ -113,22 +129,21 @@ if (weather) {
   const condition = weather.weather[0].main;
 
   if (condition === "Clear") {
-    mood = "☀ Sunny Escapes";
-  } else if (condition === "Clouds") {
-    mood = "☁ Cozy Evening Cinema";
-  } else if (condition === "Rain") {
-    mood = "🌧 Rainy Day Picks";
-  } else if (condition === "Thunderstorm") {
-    mood = "⚡ Dark & Intense";
-  } else if (condition === "Snow") {
-    mood = "❄ Winter Wonders";
-  } else {
-    mood = "🎬 Movie Time";
-  }
+  mood = "☀️ Sunny Escapes";
+} else if (condition === "Clouds") {
+  mood = "☁️ Cozy Evening Cinema";
+} else if (condition === "Rain") {
+  mood = "🌧️ Rainy Day Picks";
+} else if (condition === "Thunderstorm") {
+  mood = "⚡️ Dark & Intense";
+} else if (condition === "Snow") {
+  mood = "❄️ Winter Wonders";
+} else {
+  mood = "🎬 Movie Time";
+}
 }
 
-console.log("weather:", weather);
-console.log("recommendedMovies:", recommendedMovies);
+
 
 
   return (
@@ -140,13 +155,14 @@ console.log("recommendedMovies:", recommendedMovies);
   </p>
 </div>
 
-      {/* WEATHER SECTION */}
+      
       <div className="section">
-        <h2>🌤 Weather Search</h2>
+        <h2>🌤️ Weather Search</h2>
 
         <div className="search-row">
 
  <input
+ onKeyDown={(e) => e.key === "Enter" && handleWeatherSearch()}
   className="search-input"
   type="text"
   placeholder="Enter city name"
@@ -172,9 +188,9 @@ console.log("recommendedMovies:", recommendedMovies);
         {weather && (
           <div className="weather-details">
             <h3>{weather.name}</h3>
-            <p>🌡 Temperature: {weather.main.temp}°C</p>
+            <p>🌡️ Temperature: {weather.main.temp}°C</p>
             <p>💧 Humidity: {weather.main.humidity}%</p>
-            <p>🌥 Condition: {weather.weather[0].main}</p>
+            <p>🌥️ Condition: {weather.weather[0].main}</p>
             <h3>Today's Mood</h3>
             <p>{mood}</p>
 
@@ -184,35 +200,46 @@ console.log("recommendedMovies:", recommendedMovies);
       </div>
       {recommendedMovies.length > 0 && (
   <div className="section">
-    <h2>🎬 Recommended For You!</h2>
+    <h2>✨ Recommended For You!</h2>
 
     <div className="recommendation-row">
       {recommendedMovies.map((movie) => (
-        <div key={movie.id} className="movie-card">
-          <img
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-          />
+       <div key={movie.id} className="movie-card">
+  {movie.poster_path ? (
+    <img
+      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+      alt={movie.title}
+    />
+  ) : (
+    <div className="no-poster">No Poster</div>
+  )}
 
-          <h4>{movie.title}</h4>
-
-          <p>
-            {movie.release_date
-              ? movie.release_date.substring(0, 4)
-              : "Unknown Year"}
-          </p>
-        </div>
+  <div className="movie-info">
+    <h4>{movie.title}</h4>
+    <p>
+  {movie.release_date
+    ? movie.release_date.substring(0, 4)
+    : "Unknown Year"}
+  {movie.vote_average > 0 && (
+    <span style={{ marginLeft: "8px", color: "#f5c518" }}>
+      ⭐ {movie.vote_average.toFixed(1)}
+    </span>
+  )}
+</p>
+  </div>
+</div>
       ))}
     </div>
   </div>
 )}
 
-      {/* MOVIE SECTION */}
+      
       <div className="section">
-        <h2>🎬 Movie Search</h2>
+        <h2>🔍 Movie Search</h2>
 
 <div className="search-row">
   <input
+  onKeyDown={(e) => e.key === "Enter" && handleMovieSearch()}
     className="search-input"
     type="text"
     placeholder="Enter movie name"
@@ -240,24 +267,27 @@ console.log("recommendedMovies:", recommendedMovies);
   <div key={movie.id} className="movie-card">
 
     {movie.poster_path ? (
-      <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-        alt={movie.title}
-      />
-    ) : (
-      <div className="no-poster">
-        No Poster
-      </div>
-    )}
+  <img
+    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+    alt={movie.title}
+  />
+) : (
+  <div className="no-poster">No Poster</div>
+)}
 
     <div className="movie-info">
       <h4>{movie.title}</h4>
 
       <p>
-        {movie.release_date
-          ? movie.release_date.substring(0, 4)
-          : "Unknown Year"}
-      </p>
+  {movie.release_date
+    ? movie.release_date.substring(0, 4)
+    : "Unknown Year"}
+  {movie.vote_average > 0 && (
+    <span style={{ marginLeft: "8px", color: "#f5c518" }}>
+      ⭐ {movie.vote_average.toFixed(1)}
+    </span>
+  )}
+</p>
     </div>
 
   </div>
