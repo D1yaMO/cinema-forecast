@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import "./App.css";
 import {
   getWeather,
   getMovies,
@@ -120,51 +121,41 @@ if (weather) {
 
 
   return (
-    <div
-      style={{
-        fontFamily: "Arial",
-        padding: "30px",
-        maxWidth: "1000px",
-        margin: "0 auto",
-      }}
-    >
-      <h1 style={{ textAlign: "center" }}>
-  🎬 Cinema Forecast
-  
-</h1>
-<p style={{ textAlign: "center" }}>
-  Discover movies that match today's atmosphere.
-</p>
+    <div className="app">
+      <div className="hero">
+  <h1>🎬 Cinema Forecast</h1>
+  <p className="subtitle">
+    Discover movies that match today's atmosphere.
+  </p>
+</div>
 
       {/* WEATHER SECTION */}
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "10px",
-          padding: "20px",
-          marginTop: "20px",
-        }}
-      >
+      <div className="section">
         <h2>🌤 Weather Search</h2>
 
-        <input
-          type="text"
-          placeholder="Enter city name"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          style={{
-            padding: "10px",
-            width: "250px",
-            marginRight: "10px",
-          }}
-        />
+        <div className="search-row">
 
-        <button
+ <input
+  className="search-input"
+  type="text"
+  placeholder="Enter city name"
+  value={city}
+  onChange={(e) => setCity(e.target.value)}
+  style={{
+    padding: "10px",
+    width: "250px",
+    marginRight: "10px",
+  }}
+/>
+
+<button
+  className="search-button"
   onClick={handleWeatherSearch}
   disabled={loadingWeather}
 >
   {loadingWeather ? "Loading..." : "Get Weather"}
 </button>
+</div>
 {weatherError && (
   <p style={{ color: "red", marginTop: "10px" }}>
     ❌ {weatherError}
@@ -172,7 +163,7 @@ if (weather) {
 )}
 
         {weather && (
-          <div style={{ marginTop: "20px" }}>
+          <div className="weather-details">
             <h3>{weather.name}</h3>
             <p>🌡 Temperature: {weather.main.temp}°C</p>
             <p>💧 Humidity: {weather.main.humidity}%</p>
