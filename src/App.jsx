@@ -56,11 +56,19 @@ if (condition === "Clear") {
   ];
 }
 const movieResults = await Promise.all(
-  recommendedTitles.map((title) => getMovieByTitle(title))
+  recommendedTitles.map(async (title) => {
+    try {
+      const movie = await getMovieByTitle(title);
+      return movie || null;
+    } catch (err) {
+      return null;
+    }
+  })
 );
-console.log(movieResults);
 
-setRecommendedMovies(movieResults);
+const validMovies = movieResults.filter(Boolean);
+
+setRecommendedMovies(validMovies);
   } catch (err) {
   
 
@@ -119,6 +127,9 @@ if (weather) {
   }
 }
 
+console.log("weather:", weather);
+console.log("recommendedMovies:", recommendedMovies);
+
 
   return (
     <div className="app">
@@ -171,56 +182,28 @@ if (weather) {
           </div>
         )}
       </div>
-      {weather && recommendedMovies.length > 0 &&  (
-  <div
-    style={{
-      border: "1px solid #ddd",
-      borderRadius: "10px",
-      padding: "20px",
-      marginTop: "30px",
-    }}
-  >
+      {recommendedMovies.length > 0 && (
+  <div className="section">
     <h2>🎬 Recommended For You!</h2>
 
-    <div
-  style={{
-    display: "flex",
-gap: "20px",
-overflowX: "auto",
-paddingBottom: "10px",
-marginTop: "20px",
-  }}
->
-  {recommendedMovies.map((movie) => (
-    <div
-      key={movie.id}
-  style={{
-    minWidth: "220px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    padding: "10px",
-    textAlign: "center",
-      }}
-    >
-      <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-        alt={movie.title}
-        style={{
-          width: "100%",
-          borderRadius: "8px",
-        }}
-      />
+    <div className="recommendation-row">
+      {recommendedMovies.map((movie) => (
+        <div key={movie.id} className="movie-card">
+          <img
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+          />
 
-      <h4>{movie.title}</h4>
+          <h4>{movie.title}</h4>
 
-      <p>
-        {movie.release_date
-          ? movie.release_date.substring(0, 4)
-          : "Unknown Year"}
-      </p>
+          <p>
+            {movie.release_date
+              ? movie.release_date.substring(0, 4)
+              : "Unknown Year"}
+          </p>
+        </div>
+      ))}
     </div>
-  ))}
-</div>
   </div>
 )}
 
@@ -252,54 +235,31 @@ marginTop: "20px",
   </p>
 )}
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "15px",
-            marginTop: "20px",
-          }}
-        >
+        <div className="movie-grid">
          {movies.map((movie) => (
-  <div
-    key={movie.id}
-    style={{
-      border: "1px solid #ddd",
-      borderRadius: "10px",
-      padding: "10px",
-      textAlign: "center",
-    }}
-  >
+  <div key={movie.id} className="movie-card">
+
     {movie.poster_path ? (
       <img
         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
         alt={movie.title}
-        style={{
-          width: "100%",
-          borderRadius: "8px",
-        }}
       />
     ) : (
-      <div
-        style={{
-          height: "300px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "1px solid #ccc",
-        }}
-      >
+      <div className="no-poster">
         No Poster
       </div>
     )}
 
-    <h4>{movie.title}</h4>
+    <div className="movie-info">
+      <h4>{movie.title}</h4>
 
-    <p>
-      {movie.release_date
-        ? movie.release_date.substring(0, 4)
-        : "Unknown Year"}
-    </p>
+      <p>
+        {movie.release_date
+          ? movie.release_date.substring(0, 4)
+          : "Unknown Year"}
+      </p>
+    </div>
+
   </div>
 ))}
         </div>
