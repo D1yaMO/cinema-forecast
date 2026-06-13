@@ -141,11 +141,7 @@ if (weather) {
   placeholder="Enter city name"
   value={city}
   onChange={(e) => setCity(e.target.value)}
-  style={{
-    padding: "10px",
-    width: "250px",
-    marginRight: "10px",
-  }}
+  
 />
 
 <button
@@ -229,34 +225,27 @@ marginTop: "20px",
 )}
 
       {/* MOVIE SECTION */}
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "10px",
-          padding: "20px",
-          marginTop: "30px",
-        }}
-      >
+      <div className="section">
         <h2>🎬 Movie Search</h2>
 
-        <input
-          type="text"
-          placeholder="Enter movie name"
-          value={movieQuery}
-          onChange={(e) => setMovieQuery(e.target.value)}
-          style={{
-            padding: "10px",
-            width: "250px",
-            marginRight: "10px",
-          }}
-        />
+<div className="search-row">
+  <input
+    className="search-input"
+    type="text"
+    placeholder="Enter movie name"
+    value={movieQuery}
+    onChange={(e) => setMovieQuery(e.target.value)}
+  />
 
-        <button
-  onClick={handleMovieSearch}
-  disabled={loadingMovies}
->
-  {loadingMovies ? "Searching..." : "Search Movies"}
-</button>
+  <button
+    className="search-button"
+    onClick={handleMovieSearch}
+    disabled={loadingMovies}
+  >
+    {loadingMovies ? "Searching..." : "Search Movies"}
+  </button>
+</div>
+
 {movieError && (
   <p style={{ color: "red", marginTop: "10px" }}>
     ❌ {movieError}
